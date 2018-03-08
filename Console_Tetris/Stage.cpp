@@ -1,5 +1,6 @@
 #include "Stage.h"
 #include "Core.h"
+#include "Shape.h"
 
 
 
@@ -25,7 +26,7 @@ bool CStage::CheckBlock(int x, int y)
 		return true;
 
 	// 기존에 쌓여있는 도형에 닿는 경우 true 리턴.
-	return m_Stage[y][x] == '0';
+	return ('0' <= m_Stage[y][x] && m_Stage[y][x] <='6');
 }
 
 // 다음 도형을 출력하기 전 현재 도형을 stage에 추가시키는 함수
@@ -38,9 +39,41 @@ void CStage::AddBlock(CShape * pShape, const POSITION & tPos)
 			// 도형이 쌓였을 때 도형의 색을 유지하려면 어떻게 해야할까?
 			// 도형클래스를 리스트에 추가하는 경우(기억공간 낭비 가능성)
 			// stage 좌표에 추가하는 경우.... 등
-			// 각 도형에 0~7까지 인덱스를 부여해서 m_Stage[i][j]를
-			// 0이 아닌 0~7까지로 하고 빈공간의 경우 -1로.
+			// 각 도형에 0~6까지 인덱스를 부여해서 m_Stage[i][j]를
+			// 0이 아닌 0~6까지로 하고 빈공간의 경우 9로.
 			// 이렇게 하면 도형색을 각각 표현가능함.
+
+			// 현재블럭의 네모칸 하나하나를 얻어온다.
+			char BlockXY = pShape->GetBlock(j, i);
+			if ('0' <= BlockXY && BlockXY <= '6')
+			{
+				// tPos.y는 바닥을 의미
+				m_Stage[tPos.y - (3 - i)][tPos.x + j] = BlockXY;
+
+				bool bLine = true;
+				// 현재 줄을 체크한다.
+				for (int k = 0; k < STAGE_WIDTH; ++k)
+				{
+					// 현재 줄이 하나라도 빈칸이라면 if문 수행
+					if (m_Stage[tPos.y - (3 - i)][k] == '9')
+					{
+						bLine = false;
+						break;
+					}
+				}
+				// 현재 블럭이 채워진 줄이 모두 블럭이라면 한 줄 지워준다.
+				// 위의 블럭들을 모두 한칸씩 내려준다.
+				if (bLine)
+				{
+					for (int k = tPos.y - (3 - i); k > 0; --k)
+					{
+						for (int l = 0; l < STAGE_WIDTH; ++l)
+						{
+							m_Stage[k][l] = m_Stage[k - 1][l];
+						}
+					}
+				}
+			}
 		}
 	}
 }
@@ -51,7 +84,7 @@ bool CStage::Init()
 	{
 		for (int j = 0; j < STAGE_WIDTH; ++j)
 		{
-			m_Stage[i][j] = '1';
+			m_Stage[i][j] = '9';
 		}
 	}
 	return true;
@@ -69,7 +102,7 @@ void CStage::Render()
 	{
 		for (int j = 0; j < STAGE_WIDTH + 2; ++j)
 		{
-			if (i == 0 && (j == 0 || j == STAGE_HEIGHT + 1))
+			if (i == 0 && (j == 0 || j == STAGE_WIDTH + 1))
 				cout << "▩";
 			else if (i == STAGE_HEIGHT)
 				cout << "▩";
@@ -79,10 +112,16 @@ void CStage::Render()
 				cout << "▩";
 			else
 			{
-				if (m_Stage[i][j - 1] == '1')
+				if (m_Stage[i][j - 1] == '9')
 					cout << "  ";
 				else
+				{
+
+					// 색 설정을 위해 변경할 부분
+					CCore::GetInst()->SetColor((int)m_Stage[i][j - 1] + 8, 0);
 					cout << "□";
+					CCore::GetInst()->SetColor(15, 0);
+				}
 			}
 		}
 

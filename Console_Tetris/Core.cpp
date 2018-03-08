@@ -58,3 +58,10 @@ void CCore::SetConsolePos(int x, int y)
 	COORD	pos = { (x + 1) * 2, y };
 	SetConsoleCursorPosition(m_hConsole, pos);
 }
+
+void CCore::SetColor(int color, int bgcolor)
+{
+	color &= 0xf;
+	bgcolor &= 0xf;
+	SetConsoleTextAttribute(m_hConsole, (bgcolor << 4) | color);
+}

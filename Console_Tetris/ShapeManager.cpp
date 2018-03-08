@@ -41,7 +41,7 @@ void CShapeManager::Update()
 
 	if (GetAsyncKeyState(VK_UP) & 0x8000)
 	{
-
+		m_pCurShape->Rotation();
 	}
 
 	// 수동으로 아래 버튼을 눌러 도형이 내려올 수 있도록 하는 기능
@@ -64,6 +64,12 @@ void CShapeManager::Update()
 		// 으로 만들어준다. 그 후 다음 도형을 생성한다.
 		if (m_pCurShape->MoveDown())
 		{
+			// 어딘가에 닿았을 때 해당블럭을 지우기 전에 stage에 추가해준다.
+			pStage->AddBlock(m_pCurShape, m_pCurShape->GetPosition());
+
+			// 현재 블럭 객체 정보를 stage에 저장해 놓아서 필요가 없으니
+			// 할당을 해제해준다.
+			SAFE_DELETE(m_pCurShape);
 			
 			m_pCurShape = m_pNextShape;
 			m_pCurShape -> SetPosition(4, 0);

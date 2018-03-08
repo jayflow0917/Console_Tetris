@@ -13,7 +13,8 @@ CShape::CShape()
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			m_cShape[i][j] = '1';
+			m_cShape[i][j] = '9';
+			m_cNextShape[i][j] = '9';
 		}
 	}
 }
@@ -27,11 +28,13 @@ bool CShape::Init(SHAPE_TYPE eType)
 {
 	m_tPos.x = 4;
 	m_tPos.y = 0;
+	m_iNowType = (int)eType;
 
-	// 초기 Rotation 설정
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
-			m_cShape[i][j] = m_cBlocks[eType][0][i][j];
+			// 초기 Rotation 설정
+			// eType이 뭐냐에 따라 m_iDir을 달라해줄 것.
+			m_cShape[i][j] = m_cBlocks[m_iNowType][m_iDir][i][j];
 		}
 	}
 
@@ -52,11 +55,13 @@ void CShape::Render()
 			//if (iXIndex >= STAGE_WIDTH)
 			//	continue;
 
-			if (m_cShape[i][j] == '0')
+			if (m_cShape[i][j] != '9')
 			{
 				// 콘솔창에 출력할 좌표를 설정한 후에 출력한다.
 				CCore::GetInst()->SetConsolePos(iXIndex, iYIndex);
+				CCore::GetInst()->SetColor((int)m_cShape[i][j] + 8, 0);
 				cout << "■";
+				CCore::GetInst()->SetColor(15, 0);
 			}
 		}
 		cout << endl;
@@ -73,10 +78,12 @@ void CShape::RenderNext()
 		{
 			int iXIndex = m_tPos.x + j;
 
-			if (m_cShape[i][j] == '0')
+			if (m_cShape[i][j] != '9')
 			{
 				CCore::GetInst()->SetConsolePos(iXIndex, iYIndex);
+				CCore::GetInst()->SetColor((int)m_cShape[i][j] + 8, 0);
 				cout << "■";
+				CCore::GetInst()->SetColor(15, 0);
 			}
 		}
 		cout << endl;
@@ -93,7 +100,7 @@ bool CShape::MoveDown()
 	{
 		for (int j = 0; j < 4; ++j)
 		{
-			if (m_cShape[i][j] == '0')
+			if (m_cShape[i][j] != '9')
 			{
 				// (3-i)가 아닌 (2-i)를 체크하는 이유는 다음줄로 도형이 
 				// 내려갔다고 가정하고 가능한 것인지를 체크하기 위함.
@@ -106,7 +113,7 @@ bool CShape::MoveDown()
 					{
 						for (int l = 0; l < 4; ++l)
 						{
-							if (m_cShape[k][l] == '0')
+							if (m_cShape[k][l] != '9')
 							{
 								if (m_tPos.y - (3 - k) < 0)
 								{
@@ -138,15 +145,77 @@ void CShape::MoveLeft()
 		return;
 
 	// 벽이 아닌 쌓여있는 블럭들에 막혀 더이상 진행할 수 없는 경우
+	CStage* pStage = CStageManager::GetInst()->GetCurrentStage();
+
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			if (m_cShape[i][j] != '9')
+			{
+				if (pStage->CheckBlock(m_tPos.x + j - 1, m_tPos.y - (3 - i)))
+				{
+					return;
+				}
+			}
+		}
+	}
 
 	--m_tPos.x;
 }
 
 void CShape::MoveRight()
 {
+	CStage* pStage = CStageManager::GetInst()->GetCurrentStage();
+
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			if (m_cShape[i][j] != '9')
+			{
+				if (pStage->CheckBlock(m_tPos.x + j + 1, m_tPos.y - (3 - i)))
+				{
+					return;
+				}
+			}
+		}
+	}
+
 	++m_tPos.x;
 }
 
 void CShape::Rotation()
 {
+	CStage* pStage = CStageManager::GetInst()->GetCurrentStage();
+
+	// 도형을 Rotation했다고 가정했을 때의 4*4 도형의 위치를 stage와 
+	// 비교해서 가능여부를 판단한다.
+	++m_iDir;
+	m_iDir %= RD_END;
+	for (int i = 0; i < 4; ++i) {
+		for (int j = 0; j < 4; ++j) {
+			m_cNextShape[i][j] = m_cBlocks[m_iNowType][m_iDir][i][j];
+			if (m_cNextShape[i][j] != '9') {
+				if (pStage->CheckBlock(m_tPos.x + j, m_tPos.y - (3 - i)))
+				{
+					// 위에서 m_iDir을 RD_END로 나눴으므로 0~3사이
+					// 값을 갖으므로 -1이 될 때의 처리를 해줘야 한다.
+					if ((--m_iDir) == -1)
+						m_iDir = 3;
+					return;
+				}
+
+			}
+		}
+	}
+
+	// 다음 회전 도형으로 바꿔준다.
+	for (int i = 0; i < 4; ++i)
+	{
+		for (int j = 0; j < 4; ++j)
+		{
+			m_cShape[i][j] = m_cNextShape[i][j];
+		}
+	}
 }
