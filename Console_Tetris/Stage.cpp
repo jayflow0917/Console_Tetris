@@ -2,18 +2,16 @@
 #include "Core.h"
 #include "Shape.h"
 
-
-
 CStage::CStage()	:
 	m_iSpeed(5)
 {
 }
 
-
 CStage::~CStage()
 {
 }
 
+// 경계 체크
 // x는 가로, y는 세로를 의미
 bool CStage::CheckBlock(int x, int y)
 {
@@ -37,8 +35,8 @@ void CStage::AddBlock(CShape * pShape, const POSITION & tPos)
 		for (int j = 0; j < 4; ++j)
 		{
 			// 도형이 쌓였을 때 도형의 색을 유지하려면 어떻게 해야할까?
-			// 도형클래스를 리스트에 추가하는 경우(기억공간 낭비 가능성)
-			// stage 좌표에 추가하는 경우.... 등
+			// 1. 도형클래스를 리스트에 추가하는 경우(기억공간 낭비 가능성)
+			// 2. stage 좌표에 추가하는 경우
 			// 각 도형에 0~6까지 인덱스를 부여해서 m_Stage[i][j]를
 			// 0이 아닌 0~6까지로 하고 빈공간의 경우 9로.
 			// 이렇게 하면 도형색을 각각 표현가능함.
@@ -78,6 +76,7 @@ void CStage::AddBlock(CShape * pShape, const POSITION & tPos)
 	}
 }
 
+// stage 틀 생성
 bool CStage::Init()
 {
 	for (int i = 0; i < STAGE_HEIGHT; ++i)
@@ -98,6 +97,8 @@ void CStage::Render()
 	// 위한 위치로 다시 옮겨줘야 한다.
 	CCore::GetInst()->SetConsolePos(-1, 0);
 
+	// 상하좌우 벽을 한줄 추가하는 것이므로 
+	// 상수로 설정한 값들보다 +2 해주어야 한다.
 	for (int i = 0; i < STAGE_HEIGHT + 1; ++i)
 	{
 		for (int j = 0; j < STAGE_WIDTH + 2; ++j)
@@ -137,4 +138,12 @@ void CStage::Render()
 		CCore::GetInst()->SetConsolePos(12, 1);
 		cout << "Next Shape" << endl;
 	}
+
+	// 안내사항 출력
+	CCore::GetInst()->SetConsolePos(12, 8);
+	cout << "  ▲   : Rotation          ESC   : Quit" << endl;
+	CCore::GetInst()->SetConsolePos(12, 9);
+	cout << "◀  ▶ : Left | Right       P    : Pause" << endl;
+	CCore::GetInst()->SetConsolePos(12, 10);
+	cout << "  ▼   : Soft Drop      SpaceBar : Hard Drop" << endl;
 }

@@ -22,10 +22,8 @@ public:
 	}
 
 public:
-	bool CheckBlock(int x, int y);
-	
-public:
 	void AddBlock(class CShape* pShape, const POSITION& tPos);
+	bool CheckBlock(int x, int y);
 
 public:
 	bool Init();

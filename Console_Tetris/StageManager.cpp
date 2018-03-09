@@ -8,7 +8,6 @@ CStageManager::CStageManager()	:
 {
 }
 
-
 CStageManager::~CStageManager()
 {
 }

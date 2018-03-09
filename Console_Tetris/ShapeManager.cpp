@@ -50,6 +50,7 @@ void CShapeManager::Update()
 		m_pCurShape->MoveDown();
 	}
 
+	// 스페이스 입력시 도형이 현재 stage 바닥에 한 번에 닿도록 함
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 	{
 		while (!m_pCurShape->MoveDown());

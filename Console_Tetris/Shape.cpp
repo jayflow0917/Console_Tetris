@@ -27,9 +27,11 @@ bool CShape::Init(SHAPE_TYPE eType)
 	m_tPos.y = 0;
 	m_iNowType = (int)eType;
 
+	// eType에 따라 m_iDir을 달리해줄 것.
+
 	// 도형 : O J L I S T Z
 	// 방향 : U L R R R U R
-	if (eType == ST_O or eType == ST_T) {}
+	if (eType == ST_O || eType == ST_T) {}
 	else if (eType == ST_J)
 		m_iDir = RD_LEFT;
 	else
@@ -38,7 +40,6 @@ bool CShape::Init(SHAPE_TYPE eType)
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
 			// 초기 Rotation 설정
-			// eType이 뭐냐에 따라 m_iDir을 달라해줄 것.
 			m_cShape[i][j] = m_cBlocks[m_iNowType][m_iDir][i][j];
 		}
 	}

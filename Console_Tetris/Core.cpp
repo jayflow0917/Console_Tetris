@@ -50,6 +50,7 @@ void CCore::Run()
 	}
 }
 
+// 입력받은 x, y 좌표에 커서를 위치시킨다.
 void CCore::SetConsolePos(int x, int y)
 {
 	// Tetris에서는 특수문자를 사용하여 1칸을 표현하는데 한칸은 2바이트를
