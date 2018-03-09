@@ -53,6 +53,7 @@ void CShapeManager::Update()
 	if (GetAsyncKeyState(VK_SPACE) & 0x8000)
 	{
 		while (!m_pCurShape->MoveDown());
+		m_iSpeed = 5;
 	}
 
 	// 도형의 다음 진행을 위한 부분.

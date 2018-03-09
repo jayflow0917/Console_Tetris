@@ -117,9 +117,9 @@ void CStage::Render()
 				else
 				{
 
-					// 색 설정을 위해 변경할 부분
+					// stage에 쌓인 도형들의 각각의 색을 출력한다
 					CCore::GetInst()->SetColor((int)m_Stage[i][j - 1] + 8, 0);
-					cout << "□";
+					cout << "■";
 					CCore::GetInst()->SetColor(15, 0);
 				}
 			}

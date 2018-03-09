@@ -3,8 +3,6 @@
 #include "Stage.h"
 #include "StageManager.h"
 
-
-
 CShape::CShape()
 {
 	m_iDir = RD_UP;
@@ -19,7 +17,6 @@ CShape::CShape()
 	}
 }
 
-
 CShape::~CShape()
 {
 }
@@ -29,6 +26,14 @@ bool CShape::Init(SHAPE_TYPE eType)
 	m_tPos.x = 4;
 	m_tPos.y = 0;
 	m_iNowType = (int)eType;
+
+	// 도형 : O J L I S T Z
+	// 방향 : U L R R R U R
+	if (eType == ST_O or eType == ST_T) {}
+	else if (eType == ST_J)
+		m_iDir = RD_LEFT;
+	else
+		m_iDir = RD_RIGHT;
 
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
@@ -193,6 +198,7 @@ void CShape::Rotation()
 	// 비교해서 가능여부를 판단한다.
 	++m_iDir;
 	m_iDir %= RD_END;
+
 	for (int i = 0; i < 4; ++i) {
 		for (int j = 0; j < 4; ++j) {
 			m_cNextShape[i][j] = m_cBlocks[m_iNowType][m_iDir][i][j];
