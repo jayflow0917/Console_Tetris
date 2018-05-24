@@ -39,6 +39,11 @@ bool CCore::Init()
 
 void CCore::Run()
 {
+	cout << "Welcome to Tetris World !!" << endl;
+	cout << "Press Any Key to play Tetris" << endl;
+	system("pause");
+	system("cls");
+
 	while (m_bLoop)
 	{
 		CShapeManager::GetInst()->Update();
